@@ -20,7 +20,7 @@ $recentOrders = array_slice(find_user_orders($pdo, (int) $user['id']), 0, 5);
 
 require __DIR__ . '/../includes/header.php';
 ?>
-<section class="page-heading">
+<section class="page-heading page-heading-premium">
     <div>
         <p class="eyebrow">My Coffee Rewards</p>
         <h1>สวัสดี <?= e((string) $member['name']) ?></h1>
@@ -44,7 +44,11 @@ require __DIR__ . '/../includes/header.php';
     </a>
 </section>
 
-<section class="card welcome-card">
+<section class="card welcome-card hero-card">
+    <div class="hero-card-topline">
+        <p class="eyebrow">Your daily ritual</p>
+        <span class="hero-card-mark" aria-hidden="true">✦</span>
+    </div>
     <h2>พื้นที่ส่วนตัวของคุณ</h2>
     <p class="muted">คุณจะเห็นเฉพาะข้อมูลสมาชิก แต้มสะสม และออเดอร์ของบัญชีนี้เท่านั้น</p>
     <div class="actions">

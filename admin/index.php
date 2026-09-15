@@ -14,7 +14,7 @@ $activePoints = (int) $pdo->query("SELECT COALESCE(SUM(points), 0) FROM purchase
 
 require __DIR__ . '/../includes/header.php';
 ?>
-<section class="page-heading">
+<section class="page-heading page-heading-premium">
     <div>
         <p class="eyebrow">Admin Portal</p>
         <h1>แดชบอร์ดผู้ดูแลระบบ</h1>
@@ -23,7 +23,11 @@ require __DIR__ . '/../includes/header.php';
     <span class="badge badge-admin">Admin</span>
 </section>
 
-<section class="card welcome-card">
+<section class="card welcome-card hero-card">
+    <div class="hero-card-topline">
+        <p class="eyebrow">The house control room</p>
+        <span class="hero-card-mark" aria-hidden="true">✦</span>
+    </div>
     <p class="eyebrow">เข้าสู่ระบบสำเร็จ</p>
     <h2>สวัสดี <?= e((string) ($user['username'] ?? 'Admin')) ?></h2>
     <p class="muted">หน้านี้จะรวมข้อมูลทั้งหมดของร้านสำหรับผู้ดูแลระบบ</p>

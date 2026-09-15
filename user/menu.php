@@ -13,13 +13,22 @@ unset($_SESSION['order_errors'], $_SESSION['order_quantities']);
 
 require __DIR__ . '/../includes/header.php';
 ?>
-<section class="page-heading">
+<section class="page-heading page-heading-premium">
     <div>
         <p class="eyebrow">Order from our café</p>
         <h1>เลือกเมนูที่ชอบ</h1>
         <p class="muted">เลือกจำนวนแล้วกดยืนยัน ระบบจะคำนวณราคาจากเมนูปัจจุบันบน server</p>
     </div>
     <a class="button button-muted" href="<?= e(app_url('user/orders.php')) ?>">ออเดอร์ของฉัน</a>
+</section>
+
+<section class="card hero-card menu-hero" aria-label="แนะนำเมนูประจำวัน">
+    <div>
+        <p class="eyebrow">Reserve selection</p>
+        <h2>ทุกแก้วมีจังหวะของมัน</h2>
+        <p class="muted">เลือกเมนูที่ใช่ แล้วให้แต้มสะสมพาคุณไปแก้วถัดไป</p>
+    </div>
+    <span class="hero-card-mark" aria-hidden="true">☕</span>
 </section>
 
 <?php if ($orderErrors !== []): ?>

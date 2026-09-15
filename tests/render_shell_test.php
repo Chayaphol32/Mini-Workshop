@@ -24,4 +24,19 @@ foreach ($expectations as $needle => $label) {
     }
 }
 
+$pageContracts = [
+    __DIR__ . '/../user/index.php' => ['page-heading-premium', 'hero-card'],
+    __DIR__ . '/../user/menu.php' => ['page-heading-premium', 'hero-card'],
+    __DIR__ . '/../admin/index.php' => ['page-heading-premium', 'hero-card'],
+];
+foreach ($pageContracts as $pagePath => $classes) {
+    $source = (string) file_get_contents($pagePath);
+    foreach ($classes as $class) {
+        if (!str_contains($source, $class)) {
+            fwrite(STDERR, "FAIL: {$pagePath} should include {$class}\n");
+            exit(1);
+        }
+    }
+}
+
 echo "rendered shell checks passed\n";
