@@ -13,10 +13,12 @@ $projectRoot = dirname(__DIR__);
 $dispatcher = $projectRoot . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'vercel_dispatch.php';
 $vercelConfig = $projectRoot . DIRECTORY_SEPARATOR . 'vercel.json';
 $databaseConfig = $projectRoot . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'database.php';
+$bootstrapConfig = $projectRoot . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'bootstrap.php';
 
 expect_vercel(is_file($dispatcher), 'Vercel dispatcher should exist');
 expect_vercel(is_file($vercelConfig), 'vercel.json should exist');
 expect_vercel(is_file($databaseConfig), 'database config should exist');
+expect_vercel(is_file($bootstrapConfig), 'bootstrap config should exist');
 
 $databaseSource = (string) file_get_contents($databaseConfig);
 expect_vercel(
@@ -37,6 +39,12 @@ expect_vercel(
     'TLS options should support PHP 8.5 PDO MySQL constants without deprecation warnings'
 );
 
+$bootstrapSource = (string) file_get_contents($bootstrapConfig);
+expect_vercel(
+    str_contains($bootstrapSource, "defined('COFFEE_SKIP_DATABASE')"),
+    'Bootstrap should support skipping database setup for public requests'
+);
+
 require_once $dispatcher;
 
 $config = json_decode((string) file_get_contents($vercelConfig), true);
@@ -44,6 +52,21 @@ expect_vercel(is_array($config), 'vercel.json should contain valid JSON');
 expect_vercel(
     ($config['functions']['api/index.php']['runtime'] ?? null) === 'vercel-php@0.9.0',
     'Vercel should use the PHP community runtime'
+);
+$assetCacheHeader = null;
+foreach (($config['headers'] ?? []) as $headerRule) {
+    if (($headerRule['source'] ?? null) !== '/assets/(.*)') {
+        continue;
+    }
+    foreach (($headerRule['headers'] ?? []) as $header) {
+        if (($header['key'] ?? null) === 'Cache-Control') {
+            $assetCacheHeader = $header['value'] ?? null;
+        }
+    }
+}
+expect_vercel(
+    $assetCacheHeader === 'public, max-age=31536000, immutable',
+    'Static assets should use immutable cache headers'
 );
 expect_vercel(
     ($config['routes'][0]['src'] ?? null) === '/assets/(.*)'

@@ -132,3 +132,13 @@ function app_url(string $path): string
     $base = $configuredBase === '' ? '' : '/' . $configuredBase;
     return $base . '/' . ltrim($path, '/');
 }
+
+function asset_url(string $path): string
+{
+    $normalizedPath = ltrim(str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $path), DIRECTORY_SEPARATOR);
+    $filePath = dirname(__DIR__) . DIRECTORY_SEPARATOR . $normalizedPath;
+    $version = is_file($filePath) ? (string) (filemtime($filePath) ?: 1) : '1';
+    $url = app_url($path);
+
+    return $url . (str_contains($url, '?') ? '&' : '?') . 'v=' . rawurlencode($version);
+}

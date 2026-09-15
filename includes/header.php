@@ -9,7 +9,7 @@ $authUser = function_exists('current_user') ? current_user() : null;
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?= e($pageTitle) ?> | Coffee Member Rewards</title>
-    <link rel="stylesheet" href="<?= e(app_url('assets/style.css')) ?>">
+    <link rel="stylesheet" href="<?= e(asset_url('assets/style.css')) ?>">
 </head>
 <body>
 <header class="site-header">
