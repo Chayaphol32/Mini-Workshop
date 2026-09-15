@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
+define('COFFEE_SKIP_DATABASE', true);
 require_once __DIR__ . '/includes/bootstrap.php';
 
 if (current_user() !== null) {
@@ -17,6 +18,8 @@ $values = [
 ];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    require_once __DIR__ . '/config/database.php';
+
     $values['username'] = normalize_username((string) ($_POST['username'] ?? ''));
     $values['name'] = trim((string) ($_POST['name'] ?? ''));
     $values['phone'] = trim((string) ($_POST['phone'] ?? ''));

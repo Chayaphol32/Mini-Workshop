@@ -14,7 +14,9 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
 }
 
-require_once __DIR__ . '/../config/database.php';
+if (!defined('COFFEE_SKIP_DATABASE')) {
+    require_once __DIR__ . '/../config/database.php';
+}
 require_once __DIR__ . '/functions.php';
 require_once __DIR__ . '/repository.php';
 require_once __DIR__ . '/auth.php';

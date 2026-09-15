@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
+define('COFFEE_SKIP_DATABASE', true);
 require_once __DIR__ . '/includes/bootstrap.php';
 
 $user = current_user();
@@ -13,6 +14,8 @@ $errors = [];
 $username = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    require_once __DIR__ . '/config/database.php';
+
     $username = normalize_username((string) ($_POST['username'] ?? ''));
     $password = (string) ($_POST['password'] ?? '');
 
