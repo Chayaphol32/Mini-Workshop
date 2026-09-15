@@ -12,9 +12,25 @@ function expect_vercel(bool $condition, string $message): void
 $projectRoot = dirname(__DIR__);
 $dispatcher = $projectRoot . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'vercel_dispatch.php';
 $vercelConfig = $projectRoot . DIRECTORY_SEPARATOR . 'vercel.json';
+$databaseConfig = $projectRoot . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'database.php';
 
 expect_vercel(is_file($dispatcher), 'Vercel dispatcher should exist');
 expect_vercel(is_file($vercelConfig), 'vercel.json should exist');
+expect_vercel(is_file($databaseConfig), 'database config should exist');
+
+$databaseSource = (string) file_get_contents($databaseConfig);
+expect_vercel(
+    str_contains($databaseSource, "getenv('TIDB_HOST')")
+        && str_contains($databaseSource, "getenv('TIDB_PORT')")
+        && str_contains($databaseSource, "getenv('TIDB_DATABASE')")
+        && str_contains($databaseSource, "getenv('TIDB_USER')")
+        && str_contains($databaseSource, "getenv('TIDB_PASSWORD')"),
+    'Database config should support TiDB environment variables'
+);
+expect_vercel(
+    str_contains($databaseSource, 'MYSQL_ATTR_SSL_VERIFY_SERVER_CERT'),
+    'TiDB connections should enable TLS certificate verification'
+);
 
 require_once $dispatcher;
 
