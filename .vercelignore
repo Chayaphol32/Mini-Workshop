@@ -1,0 +1,14 @@
+.git
+.git/**
+tmp
+tmp/**
+tests
+tests/**
+docs
+docs/**
+scripts
+scripts/**
+Lab 7 CRUD and workshop (2).pdf
+coffee_db.sql
+database_upgrade_auth.sql
+database_upgrade_orders.sql
