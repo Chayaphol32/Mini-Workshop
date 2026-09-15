@@ -1,0 +1,7 @@
+tmp/sessions/*
+tmp/pdfs/*
+!.gitkeep
+.env
+.env.*
+!.env.example
+*.log
