@@ -1,7 +1,9 @@
 <?php
 declare(strict_types=1);
 
-define('COFFEE_SKIP_DATABASE', true);
+if (!defined('COFFEE_SKIP_DATABASE')) {
+    define('COFFEE_SKIP_DATABASE', true);
+}
 require_once __DIR__ . '/includes/bootstrap.php';
 
 if (current_user() !== null) {

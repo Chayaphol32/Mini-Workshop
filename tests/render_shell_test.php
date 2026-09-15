@@ -6,9 +6,22 @@ $_SERVER['REQUEST_METHOD'] = 'GET';
 $_SERVER['HTTPS'] = 'on';
 define('COFFEE_SKIP_DATABASE', true);
 
+$warnings = [];
+set_error_handler(static function (int $severity, string $message) use (&$warnings): bool {
+    if (in_array($severity, [E_WARNING, E_NOTICE, E_DEPRECATED], true)) {
+        $warnings[] = $message;
+    }
+    return true;
+});
 ob_start();
 require __DIR__ . '/../login.php';
 $output = (string) ob_get_clean();
+restore_error_handler();
+
+if ($warnings !== []) {
+    fwrite(STDERR, "FAIL: public shell should not emit PHP warnings\n");
+    exit(1);
+}
 
 $expectations = [
     '<a class="skip-link" href="#main-content">' => 'skip link',
