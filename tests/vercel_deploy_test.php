@@ -73,6 +73,11 @@ expect_vercel(
     $assetCacheHeader === 'public, max-age=31536000, immutable',
     'Static assets should use immutable cache headers'
 );
+$assetRouteCacheHeader = $config['routes'][0]['headers']['Cache-Control'] ?? null;
+expect_vercel(
+    $assetRouteCacheHeader === 'public, max-age=31536000, immutable',
+    'Asset route should carry its cache policy when custom routes are enabled'
+);
 expect_vercel(
     ($config['routes'][0]['src'] ?? null) === '/assets/(.*)'
         && ($config['routes'][0]['dest'] ?? null) === '/assets/$1',
