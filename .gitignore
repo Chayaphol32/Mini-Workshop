@@ -1,3 +1,4 @@
+.superpowers/
 tmp/sessions/*
 tmp/pdfs/*
 !.gitkeep
