@@ -19,7 +19,11 @@ $pdoOptions = [
 ];
 
 if ($usingTiDb) {
-    $pdoOptions[PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT] = true;
+    if (defined('Pdo\\Mysql::ATTR_SSL_VERIFY_SERVER_CERT')) {
+        $pdoOptions[constant('Pdo\\Mysql::ATTR_SSL_VERIFY_SERVER_CERT')] = true;
+    } else {
+        $pdoOptions[PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT] = true;
+    }
 
     $caPath = getenv('TIDB_SSL_CA') ?: '';
     if ($caPath === '') {
@@ -32,7 +36,11 @@ if ($usingTiDb) {
     }
 
     if ($caPath !== '') {
-        $pdoOptions[PDO::MYSQL_ATTR_SSL_CA] = $caPath;
+        if (defined('Pdo\\Mysql::ATTR_SSL_CA')) {
+            $pdoOptions[constant('Pdo\\Mysql::ATTR_SSL_CA')] = $caPath;
+        } else {
+            $pdoOptions[PDO::MYSQL_ATTR_SSL_CA] = $caPath;
+        }
     }
 }
 

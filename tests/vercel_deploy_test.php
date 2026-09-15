@@ -31,6 +31,11 @@ expect_vercel(
     str_contains($databaseSource, 'MYSQL_ATTR_SSL_VERIFY_SERVER_CERT'),
     'TiDB connections should enable TLS certificate verification'
 );
+expect_vercel(
+    str_contains($databaseSource, "defined('Pdo\\\\Mysql::ATTR_SSL_VERIFY_SERVER_CERT')")
+        && str_contains($databaseSource, "defined('Pdo\\\\Mysql::ATTR_SSL_CA')"),
+    'TLS options should support PHP 8.5 PDO MySQL constants without deprecation warnings'
+);
 
 require_once $dispatcher;
 
