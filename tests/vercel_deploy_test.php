@@ -24,6 +24,16 @@ expect_vercel(
     ($config['functions']['api/index.php']['runtime'] ?? null) === 'vercel-php@0.9.0',
     'Vercel should use the PHP community runtime'
 );
+expect_vercel(
+    ($config['routes'][0]['src'] ?? null) === '/assets/(.*)'
+        && ($config['routes'][0]['dest'] ?? null) === '/assets/$1',
+    'Only assets should bypass the PHP runtime'
+);
+expect_vercel(
+    ($config['routes'][1]['src'] ?? null) === '/(.*)'
+        && ($config['routes'][1]['dest'] ?? null) === '/api/index.php',
+    'All application requests should use the PHP runtime'
+);
 
 $indexPath = realpath($projectRoot . DIRECTORY_SEPARATOR . 'index.php');
 $loginPath = realpath($projectRoot . DIRECTORY_SEPARATOR . 'login.php');
