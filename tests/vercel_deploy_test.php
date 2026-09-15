@@ -38,6 +38,11 @@ expect_vercel(
         && str_contains($databaseSource, "defined('Pdo\\\\Mysql::ATTR_SSL_CA')"),
     'TLS options should support PHP 8.5 PDO MySQL constants without deprecation warnings'
 );
+expect_vercel(
+    str_contains($databaseSource, "getenv('TIDB_PERSISTENT')")
+        && str_contains($databaseSource, 'PDO::ATTR_PERSISTENT'),
+    'TiDB connections should support optional persistent connections'
+);
 
 $bootstrapSource = (string) file_get_contents($bootstrapConfig);
 expect_vercel(

@@ -19,6 +19,11 @@ $pdoOptions = [
 ];
 
 if ($usingTiDb) {
+    $persistent = filter_var(getenv('TIDB_PERSISTENT') ?: '1', FILTER_VALIDATE_BOOLEAN);
+    if ($persistent) {
+        $pdoOptions[PDO::ATTR_PERSISTENT] = true;
+    }
+
     if (defined('Pdo\\Mysql::ATTR_SSL_VERIFY_SERVER_CERT')) {
         $pdoOptions[constant('Pdo\\Mysql::ATTR_SSL_VERIFY_SERVER_CERT')] = true;
     } else {
