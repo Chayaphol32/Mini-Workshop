@@ -41,9 +41,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 require __DIR__ . '/../includes/header.php';
 ?>
-<section class="page-heading"><div><p class="eyebrow">Admin Members</p><h1>แก้ไขข้อมูลสมาชิก</h1><p class="muted">แก้ไขได้เฉพาะชื่อและเบอร์โทร แต้มจะคำนวณจากประวัติซื้อ</p></div><a class="button button-muted" href="<?= e(app_url('admin/member_detail.php?id=' . $memberId)) ?>">กลับรายละเอียด</a></section>
-<section class="card form-card">
-    <?php if ($errors !== []): ?><ul class="error-list" role="alert"><?php foreach ($errors as $error): ?><li><?= e($error) ?></li><?php endforeach; ?></ul><?php endif; ?>
+<section class="page-header page-heading"><div><span class="eyebrow">MEMBER DIRECTORY</span><h1>แก้ไขข้อมูลสมาชิก</h1><p class="muted">อัปเดตชื่อและเบอร์โทรได้ แต้มจะคำนวณจากประวัติซื้ออัตโนมัติ</p></div><div class="page-header-actions"><a class="button button-muted" href="<?= e(app_url('admin/member_detail.php?id=' . $memberId)) ?>">กลับรายละเอียด</a></div></section>
+<section class="card form-card form-shell">
+    <div class="section-heading"><div><span class="eyebrow">EDIT MEMBER</span><h2>ข้อมูลที่แก้ไขได้</h2><p class="muted">เลขสมาชิกและแต้มสะสมเป็นข้อมูลจากระบบ ไม่สามารถแก้เองได้</p></div></div>
+    <?php if ($errors !== []): ?><ul class="error-list error-summary" role="alert" aria-label="เกิดข้อผิดพลาด"><?php foreach ($errors as $error): ?><li><?= e($error) ?></li><?php endforeach; ?></ul><?php endif; ?>
     <form method="post" action="<?= e(app_url('admin/member_edit.php?id=' . $memberId)) ?>">
         <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
         <div class="form-grid">

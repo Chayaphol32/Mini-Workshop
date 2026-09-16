@@ -57,12 +57,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 require __DIR__ . '/../includes/header.php';
 ?>
-<section class="page-heading">
-    <div><p class="eyebrow">Admin Members</p><h1>เพิ่มสมาชิก</h1><p class="muted">สมาชิกที่เพิ่มโดย Admin ยังไม่มีบัญชี User จนกว่าจะสร้างให้ภายหลัง</p></div>
-    <a class="button button-muted" href="<?= e(app_url('admin/members.php')) ?>">กลับรายชื่อ</a>
+<section class="page-header page-heading">
+    <div><span class="eyebrow">MEMBER DIRECTORY</span><h1>เพิ่มสมาชิก</h1><p class="muted">สร้างโปรไฟล์สมาชิกก่อน แล้วค่อยผูกบัญชี User ได้ภายหลัง</p></div>
+    <div class="page-header-actions"><a class="button button-muted" href="<?= e(app_url('admin/members.php')) ?>">กลับสมาชิก</a></div>
 </section>
-<section class="card form-card">
-    <?php if ($errors !== []): ?><ul class="error-list" role="alert"><?php foreach ($errors as $error): ?><li><?= e($error) ?></li><?php endforeach; ?></ul><?php endif; ?>
+<section class="card form-card form-shell">
+    <div class="section-heading"><div><span class="eyebrow">NEW MEMBER</span><h2>ข้อมูลสมาชิก</h2><p class="muted">ข้อมูลนี้ใช้สำหรับค้นหา ติดต่อ และคำนวณแต้มสะสม</p></div></div>
+    <?php if ($errors !== []): ?><ul class="error-list error-summary" role="alert" aria-label="เกิดข้อผิดพลาด"><?php foreach ($errors as $error): ?><li><?= e($error) ?></li><?php endforeach; ?></ul><?php endif; ?>
     <form method="post" action="<?= e(app_url('admin/member_create.php')) ?>">
         <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
         <div class="form-grid">

@@ -12,77 +12,131 @@ if ($member === null) {
     exit('ไม่พบข้อมูลสมาชิกที่ผูกกับบัญชี');
 }
 
-$pageTitle = 'หน้าหลักของฉัน';
+$pageTitle = 'แต้มของฉัน';
 $pathPrefix = '../';
 $totalPoints = (int) $member['total_points'];
 $level = member_level($totalPoints);
 $recentOrders = array_slice(find_user_orders($pdo, (int) $user['id']), 0, 5);
 
+$nextTierName = '';
+$pointsNeeded = 0;
+$tierProgressPercent = 100;
+if ($totalPoints < 1000) {
+    $nextTierName = 'Silver';
+    $pointsNeeded = 1000 - $totalPoints;
+    $tierProgressPercent = min(100, max(0, (int) round(($totalPoints / 1000) * 100)));
+} elseif ($totalPoints < 5000) {
+    $nextTierName = 'Gold';
+    $pointsNeeded = 5000 - $totalPoints;
+    $tierProgressPercent = min(100, max(0, (int) round((($totalPoints - 1000) / 4000) * 100)));
+} elseif ($totalPoints < 10000) {
+    $nextTierName = 'Platinum';
+    $pointsNeeded = 10000 - $totalPoints;
+    $tierProgressPercent = min(100, max(0, (int) round((($totalPoints - 5000) / 5000) * 100)));
+} else {
+    $nextTierName = 'ระดับสูงสุด';
+    $pointsNeeded = 0;
+    $tierProgressPercent = 100;
+}
+
 require __DIR__ . '/../includes/header.php';
 ?>
-<section class="page-heading page-heading-premium">
+<section class="page-header page-heading page-heading-premium">
     <div>
-        <p class="eyebrow">My Coffee Rewards</p>
-        <h1>สวัสดี <?= e((string) $member['name']) ?></h1>
-        <p class="member-meta"><span>เลขสมาชิก <?= e((string) $member['member_no']) ?></span><span>โทร <?= e((string) $member['phone']) ?></span></p>
+        <span class="eyebrow">MY COFFEE CLUB</span>
+        <h1>แต้มและสิทธิพิเศษของฉัน</h1>
+        <p class="muted">สวัสดี, <?= e((string) $member['name']) ?> — นี่คือความคืบหน้าของคุณ</p>
     </div>
-    <span class="badge badge-user">User</span>
-</section>
-
-<section class="stats-grid" aria-label="สรุปข้อมูลของฉัน">
-    <div class="stat-card">
-        <p>แต้มสะสมปัจจุบัน</p>
-        <strong><?= $totalPoints ?> แต้ม</strong>
-    </div>
-    <div class="stat-card">
-        <p>ระดับสมาชิก</p>
-        <strong><span class="badge badge-<?= e($level['key']) ?>"><?= e($level['label']) ?></span></strong>
-    </div>
-    <a class="stat-card stat-link" href="<?= e(app_url('user/menu.php')) ?>">
-        <p>พร้อมสั่งกาแฟแล้วหรือยัง?</p>
-        <strong>เปิดดูเมนู →</strong>
-    </a>
-</section>
-
-<section class="card welcome-card hero-card">
-    <div class="hero-card-topline">
-        <p class="eyebrow">Your daily ritual</p>
-        <span class="hero-card-mark" aria-hidden="true">✦</span>
-    </div>
-    <h2>พื้นที่ส่วนตัวของคุณ</h2>
-    <p class="muted">คุณจะเห็นเฉพาะข้อมูลสมาชิก แต้มสะสม และออเดอร์ของบัญชีนี้เท่านั้น</p>
-    <div class="actions">
-        <a class="button" href="<?= e(app_url('user/menu.php')) ?>">สั่งอาหาร</a>
-        <a class="button button-muted" href="<?= e(app_url('user/orders.php')) ?>">ดูออเดอร์ของฉัน</a>
-        <a class="button button-muted" href="<?= e(app_url('user/profile.php')) ?>">แก้ไขข้อมูลส่วนตัว</a>
+    <div class="page-header-actions">
+        <a class="button button-primary" href="<?= e(app_url('user/menu.php')) ?>"><span aria-hidden="true">☕</span> สั่งอีกครั้ง</a>
     </div>
 </section>
 
-<section class="card">
+<div class="member-hub">
+    <section class="member-pass hero-card" aria-label="บัตรสมาชิกดิจิทัล">
+        <div class="member-pass-top">
+            <div class="member-pass-brand"><span aria-hidden="true">☕</span> COFFEE REWARDS PASS</div>
+            <span class="badge badge-user"><?= e($level['label']) ?></span>
+        </div>
+        <div class="member-pass-body">
+            <div>
+                <span class="member-pass-label">MEMBER</span>
+                <strong><?= e((string) $member['name']) ?></strong>
+                <small><?= e((string) $member['member_no']) ?></small>
+            </div>
+            <div class="member-pass-points">
+                <span>แต้มสะสม</span>
+                <strong><?= number_format($totalPoints) ?></strong>
+            </div>
+        </div>
+    </section>
+
+    <section class="progress-card card" aria-labelledby="progress-title">
+        <div class="progress-card-heading">
+            <div>
+                <span class="eyebrow">NEXT REWARD</span>
+                <h2 id="progress-title">เส้นทางสมาชิกของคุณ</h2>
+            </div>
+            <span class="progress-percent"><?= $tierProgressPercent ?>%</span>
+        </div>
+        <div class="progress-track" role="progressbar" aria-valuenow="<?= $tierProgressPercent ?>" aria-valuemin="0" aria-valuemax="100" aria-label="ความคืบหน้าสู่ระดับถัดไป">
+            <span style="width: <?= $tierProgressPercent ?>%;"></span>
+        </div>
+        <?php if ($pointsNeeded > 0): ?>
+            <p class="progress-message">อีก <strong><?= number_format($pointsNeeded) ?> แต้ม</strong> เพื่อเลื่อนเป็นระดับ <?= e($nextTierName) ?></p>
+        <?php else: ?>
+            <p class="progress-message">คุณอยู่ในระดับสูงสุดแล้ว — ขอบคุณที่แวะมาหากันเสมอ</p>
+        <?php endif; ?>
+    </section>
+</div>
+
+<section class="stats-grid member-stats" aria-label="สรุปสมาชิก">
+    <div class="stat-card"><p>แต้มสะสมปัจจุบัน</p><strong><?= number_format($totalPoints) ?> <small>แต้ม</small></strong></div>
+    <div class="stat-card"><p>ระดับสมาชิก</p><strong><span class="badge badge-<?= e($level['key']) ?>"><?= e($level['label']) ?></span></strong></div>
+    <div class="stat-card"><p>เลขสมาชิก</p><strong><?= e((string) $member['member_no']) ?></strong></div>
+</section>
+
+<section class="card recent-orders-card">
     <div class="section-heading">
         <div>
+            <span class="eyebrow">RECENT ORDERS</span>
             <h2>ออเดอร์ล่าสุดของฉัน</h2>
-            <p class="muted">ดูสถานะการสั่งอาหารจากบัญชีนี้</p>
+            <p class="muted">ดูรายการล่าสุด หรือกดสั่งเมนูเดิมอีกครั้ง</p>
         </div>
         <a class="button button-small button-muted" href="<?= e(app_url('user/orders.php')) ?>">ดูทั้งหมด</a>
     </div>
     <?php if ($recentOrders === []): ?>
-        <div class="empty">ยังไม่มีประวัติการสั่งอาหาร</div>
+        <div class="empty-state compact-empty">
+            <span class="empty-state-icon" aria-hidden="true">◷</span>
+            <h2>ยังไม่มีประวัติการสั่งอาหาร</h2>
+            <p>เลือกแก้วโปรดของคุณเพื่อเริ่มสะสมแต้ม</p>
+            <a class="button button-primary" href="<?= e(app_url('user/menu.php')) ?>">เปิดเมนูอาหาร</a>
+        </div>
     <?php else: ?>
         <div class="order-list">
             <?php foreach ($recentOrders as $order): ?>
                 <a class="order-row" href="<?= e(app_url('user/order_detail.php?id=' . (int) $order['id'])) ?>">
-                    <span>
+                    <div>
                         <strong>ออเดอร์ #<?= str_pad((string) $order['id'], 6, '0', STR_PAD_LEFT) ?></strong>
                         <small><?= e(thai_datetime((string) $order['created_at'])) ?></small>
-                    </span>
-                    <span class="order-row-end">
-                        <strong><?= e(money($order['total_amount'])) ?> บาท</strong>
+                    </div>
+                    <div class="order-row-end">
+                        <strong><?= e(money($order['total_amount'])) ?> ฿</strong>
                         <span class="badge badge-status-<?= e((string) $order['status']) ?>"><?= e(order_status_label((string) $order['status'])) ?></span>
-                    </span>
+                    </div>
                 </a>
             <?php endforeach; ?>
         </div>
     <?php endif; ?>
+</section>
+
+<section class="card reward-rule-card">
+    <div class="rule-icon" aria-hidden="true">✦</div>
+    <div>
+        <span class="eyebrow">HOW IT WORKS</span>
+        <h2>สะสมแต้มได้ทุกครั้งที่สั่ง</h2>
+        <p class="muted">ทุกยอดใช้จ่าย 10 บาท = 1 แต้ม แต้มจะอัปเดตเมื่อออเดอร์สำเร็จ</p>
+    </div>
+    <a class="button button-small button-muted" href="<?= e(app_url('user/profile.php')) ?>">จัดการบัญชี</a>
 </section>
 <?php require __DIR__ . '/../includes/footer.php'; ?>

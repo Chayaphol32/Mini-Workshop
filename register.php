@@ -107,50 +107,76 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 require __DIR__ . '/includes/header.php';
 ?>
-<section class="page-heading">
-    <div>
-        <p class="eyebrow">สมาชิกใหม่</p>
-        <h1>สมัครบัญชี User</h1>
-        <p class="muted">ระบบจะสร้างเลขสมาชิกให้อัตโนมัติหลังสมัครสำเร็จ</p>
-    </div>
-    <a class="button button-muted" href="<?= e(app_url('login.php')) ?>">กลับเข้าสู่ระบบ</a>
-</section>
+<section class="auth-shell">
+    <div class="auth-intro">
+        <p class="eyebrow">New Member Registration</p>
+        <h1>ร่วมเป็นส่วนหนึ่งของ คลับคนรักกาแฟ</h1>
+        <p class="muted">สมัครสมาชิกวันนี้ รับสิทธิ์สะสมแต้มทุกออเดอร์ พร้อมเลื่อนระดับเพื่อรับรางวัลพิเศษ</p>
 
-<section class="card form-card">
-    <?php if ($errors !== []): ?>
-        <ul class="error-list" role="alert">
-            <?php foreach ($errors as $error): ?><li><?= e($error) ?></li><?php endforeach; ?>
-        </ul>
-    <?php endif; ?>
-    <form method="post" action="<?= e(app_url('register.php')) ?>">
-        <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
-        <div class="form-grid">
-            <div class="field">
-                <label for="username">ชื่อผู้ใช้</label>
-                <input id="username" name="username" value="<?= e($values['username']) ?>" maxlength="40" autocomplete="username" required>
-                <p class="field-hint">ใช้ภาษาอังกฤษ ตัวเลข จุด ขีดกลาง หรือขีดล่าง</p>
+        <div class="perks-list">
+            <div class="perk-item">
+                <div class="perk-icon" aria-hidden="true">🏷️</div>
+                <div class="perk-text">
+                    <strong>เลขสมาชิกอัตโนมัติ</strong>
+                    <p>ระบบออกเลขสมาชิก (เช่น M0001) และบัตรเสมือนจริงทันที</p>
+                </div>
             </div>
-            <div class="field">
-                <label for="phone">เบอร์โทรศัพท์</label>
-                <input id="phone" name="phone" value="<?= e($values['phone']) ?>" maxlength="30" inputmode="tel" required>
+            <div class="perk-item">
+                <div class="perk-icon" aria-hidden="true">⭐</div>
+                <div class="perk-text">
+                    <strong>อัตราสะสมแต้มคุ้มค่า</strong>
+                    <p>ทุก 10 บาท = 1 แต้มสะสม ไม่จำกัดยอดซื้อขั้นต่ำ</p>
+                </div>
             </div>
-            <div class="field field-full">
-                <label for="name">ชื่อ-นามสกุล</label>
-                <input id="name" name="name" value="<?= e($values['name']) ?>" maxlength="120" autocomplete="name" required>
-            </div>
-            <div class="field">
-                <label for="password">รหัสผ่าน</label>
-                <input id="password" name="password" type="password" minlength="8" maxlength="255" autocomplete="new-password" required>
-            </div>
-            <div class="field">
-                <label for="password_confirmation">ยืนยันรหัสผ่าน</label>
-                <input id="password_confirmation" name="password_confirmation" type="password" minlength="8" maxlength="255" autocomplete="new-password" required>
+            <div class="perk-item">
+                <div class="perk-icon" aria-hidden="true">🎁</div>
+                <div class="perk-text">
+                    <strong>ไต่ระดับความพิเศษ</strong>
+                    <p>สะสมแต้มเพื่อเลื่อนระดับ Member ➔ Silver ➔ Gold ➔ Platinum</p>
+                </div>
             </div>
         </div>
-        <div class="actions form-actions">
-            <button class="button" type="submit">สร้างบัญชี</button>
-            <a class="button button-muted" href="<?= e(app_url('login.php')) ?>">ยกเลิก</a>
-        </div>
-    </form>
+    </div>
+
+    <section class="card form-card auth-card">
+        <h2>สมัครสมาชิก</h2>
+        <p class="muted" style="margin-bottom: 20px;">กรอกข้อมูลเพื่อสร้างบัญชีผู้ใช้และบัตรสมาชิก</p>
+        <?php if ($errors !== []): ?>
+            <ul class="error-list" role="alert">
+                <?php foreach ($errors as $error): ?><li><?= e($error) ?></li><?php endforeach; ?>
+            </ul>
+        <?php endif; ?>
+        <form method="post" action="<?= e(app_url('register.php')) ?>">
+            <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
+            <div class="form-grid">
+                <div class="field">
+                    <label for="username">ชื่อผู้ใช้</label>
+                    <input id="username" name="username" value="<?= e($values['username']) ?>" maxlength="40" placeholder="username" autocomplete="username" required>
+                    <span class="field-hint">ภาษาอังกฤษ ตัวเลข จุด ขีด</span>
+                </div>
+                <div class="field">
+                    <label for="phone">เบอร์โทรศัพท์</label>
+                    <input id="phone" name="phone" value="<?= e($values['phone']) ?>" maxlength="30" placeholder="08x-xxx-xxxx" inputmode="tel" required>
+                    <span class="field-hint">สำหรับค้นหาข้อมูล</span>
+                </div>
+                <div class="field field-full">
+                    <label for="name">ชื่อ-นามสกุล</label>
+                    <input id="name" name="name" value="<?= e($values['name']) ?>" maxlength="120" placeholder="ชื่อ นามสกุล" autocomplete="name" required>
+                </div>
+                <div class="field">
+                    <label for="password">รหัสผ่าน</label>
+                    <input id="password" name="password" type="password" minlength="8" maxlength="255" placeholder="อย่างน้อย 8 ตัวอักษร" autocomplete="new-password" required>
+                </div>
+                <div class="field">
+                    <label for="password_confirmation">ยืนยันรหัสผ่าน</label>
+                    <input id="password_confirmation" name="password_confirmation" type="password" minlength="8" maxlength="255" placeholder="กรอกรหัสผ่านอีกครั้ง" autocomplete="new-password" required>
+                </div>
+            </div>
+            <button class="button button-primary button-wide" type="submit" style="margin-top: 24px;">
+                ยืนยันการสมัครสมาชิก
+            </button>
+        </form>
+        <p class="auth-switch">มีบัญชีอยู่แล้ว? <a href="<?= e(app_url('login.php')) ?>"><strong>เข้าสู่ระบบ</strong></a></p>
+    </section>
 </section>
 <?php require __DIR__ . '/includes/footer.php'; ?>

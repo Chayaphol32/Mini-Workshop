@@ -37,10 +37,35 @@ require __DIR__ . '/includes/header.php';
 ?>
 <section class="auth-shell">
     <div class="auth-intro">
-        <p class="eyebrow">Coffee Ordering & Rewards</p>
-        <h1>ยินดีต้อนรับกลับมา</h1>
-        <p class="muted">เข้าสู่ระบบเพื่อสั่งอาหาร ดูแต้มสะสม หรือจัดการร้าน</p>
+        <p class="eyebrow">Specialty Coffee Club</p>
+        <h1>ดื่มด่ำรสชาติกาแฟ พร้อมรับสิทธิพิเศษ</h1>
+        <p class="muted">เข้าสู่ระบบเพื่อสั่งกาแฟ สะสมแต้ม และเพลิดเพลินกับสิทธิพิเศษสำหรับสมาชิก</p>
+
+        <div class="perks-list">
+            <div class="perk-item">
+                <div class="perk-icon" aria-hidden="true">☕</div>
+                <div class="perk-text">
+                    <strong>สั่งง่าย ติดตามสด</strong>
+                    <p>เลือกเมนูโปรดพร้อมระบบติดตามสถานะการชงสดแบบเรียลไทม์</p>
+                </div>
+            </div>
+            <div class="perk-item">
+                <div class="perk-icon" aria-hidden="true">✨</div>
+                <div class="perk-text">
+                    <strong>สะสมแต้มทุกแก้ว</strong>
+                    <p>ทุก 10 บาทรับทันที 1 แต้ม เพื่อสะสมเลื่อนระดับและรับรางวัล</p>
+                </div>
+            </div>
+            <div class="perk-item">
+                <div class="perk-icon" aria-hidden="true">💳</div>
+                <div class="perk-text">
+                    <strong>บัตรสมาชิกดิจิทัล</strong>
+                    <p>เพลิดเพลินกับสิทธิพิเศษ 4 ระดับ: Member, Silver, Gold และ Platinum</p>
+                </div>
+            </div>
+        </div>
     </div>
+
     <section class="card form-card auth-card">
         <h2>เข้าสู่ระบบ</h2>
         <?php if ($errors !== []): ?>
@@ -51,16 +76,18 @@ require __DIR__ . '/includes/header.php';
         <form method="post" action="<?= e(app_url('login.php')) ?>">
             <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
             <div class="field">
-                <label for="username">ชื่อผู้ใช้</label>
-                <input id="username" name="username" value="<?= e($username) ?>" autocomplete="username" required autofocus>
+                <label for="username">ชื่อผู้ใช้ (Username)</label>
+                <input id="username" name="username" value="<?= e($username) ?>" autocomplete="username" placeholder="ระบุชื่อผู้ใช้ของคุณ" required autofocus>
             </div>
-            <div class="field">
-                <label for="password">รหัสผ่าน</label>
-                <input id="password" name="password" type="password" autocomplete="current-password" required>
+            <div class="field" style="margin-top: 14px;">
+                <label for="password">รหัสผ่าน (Password)</label>
+                <input id="password" name="password" type="password" autocomplete="current-password" placeholder="••••••••" required>
             </div>
-            <button class="button button-wide" type="submit">เข้าสู่ระบบ</button>
+            <button class="button button-primary button-wide" type="submit" style="margin-top: 24px;">
+                เข้าสู่ระบบ
+            </button>
         </form>
-        <p class="auth-switch">ยังไม่มีบัญชี? <a href="<?= e(app_url('register.php')) ?>">สมัครสมาชิก</a></p>
+        <p class="auth-switch">ยังไม่มีบัญชีสมาชิก? <a href="<?= e(app_url('register.php')) ?>"><strong>สมัครสมาชิกเลย</strong></a></p>
     </section>
 </section>
 <?php require __DIR__ . '/includes/footer.php'; ?>

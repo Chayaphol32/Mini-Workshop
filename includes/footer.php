@@ -5,5 +5,6 @@
         <span class="footer-note">Brew better moments.</span>
     </div>
 </footer>
+</div>
 </body>
 </html>

@@ -70,11 +70,106 @@ $users = admin_list_users($pdo, $term);
 $availableMembers = admin_members_without_user($pdo);
 require __DIR__ . '/../includes/header.php';
 ?>
-<section class="page-heading"><div><p class="eyebrow">Admin Accounts</p><h1>จัดการบัญชีผู้ใช้</h1><p class="muted">เปิด/ปิดบัญชี User และสร้าง login ให้สมาชิกเดิม</p></div><a class="button button-muted" href="<?= e(app_url('admin/index.php')) ?>">กลับ Dashboard</a></section>
+<section class="page-header page-heading">
+    <div>
+        <span class="eyebrow">ACCOUNT ACCESS</span>
+        <h1>บัญชีผู้ใช้</h1>
+        <p class="muted">สร้าง login ให้สมาชิก และควบคุมสถานะการเข้าใช้งาน</p>
+    </div>
+    <div class="page-header-actions">
+        <a class="button button-muted" href="<?= e(app_url('admin/index.php')) ?>">กลับภาพรวม</a>
+    </div>
+</section>
 
-<?php if ($errors !== []): ?><ul class="error-list" role="alert"><?php foreach ($errors as $error): ?><li><?= e($error) ?></li><?php endforeach; ?></ul><?php endif; ?>
+<?php if ($errors !== []): ?>
+    <ul class="error-list error-summary" role="alert" aria-label="เกิดข้อผิดพลาด">
+        <?php foreach ($errors as $error): ?><li><?= e($error) ?></li><?php endforeach; ?>
+    </ul>
+<?php endif; ?>
 
-<section class="card"><div class="section-heading"><div><h2>สร้างบัญชี User</h2><p class="muted">บัญชีหนึ่งผูกกับสมาชิกได้หนึ่งคน และ password จะถูก hash ก่อนบันทึก</p></div></div><?php if ($availableMembers === []): ?><div class="empty">สมาชิกทุกคนมีบัญชีแล้ว</div><?php else: ?><form method="post" action="<?= e(app_url('admin/users.php')) ?>"><input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>"><input type="hidden" name="action" value="create"><div class="form-grid"><div class="field"><label for="member_id">สมาชิก</label><select id="member_id" name="member_id" required><option value="">เลือกสมาชิก</option><?php foreach ($availableMembers as $member): ?><option value="<?= (int) $member['id'] ?>" <?= $prefillMemberId === (int) $member['id'] ? 'selected' : '' ?>><?= e($member['member_no'] . ' · ' . $member['name']) ?></option><?php endforeach; ?></select></div><div class="field"><label for="username">ชื่อผู้ใช้</label><input id="username" name="username" maxlength="40" autocomplete="username" required></div><div class="field"><label for="password">รหัสผ่าน</label><input id="password" name="password" type="password" minlength="8" autocomplete="new-password" required></div><div class="field"><label for="password_confirmation">ยืนยันรหัสผ่าน</label><input id="password_confirmation" name="password_confirmation" type="password" minlength="8" autocomplete="new-password" required></div></div><div class="actions form-actions"><button class="button" type="submit">สร้างบัญชี User</button></div></form><?php endif; ?></section>
+<section class="card form-card">
+    <div class="section-heading">
+        <div>
+            <span class="eyebrow">CREATE ACCESS</span>
+            <h2>สร้างบัญชี User</h2>
+            <p class="muted">บัญชีหนึ่งผูกกับสมาชิกได้หนึ่งคน และรหัสผ่านจะถูกเข้ารหัสก่อนบันทึก</p>
+        </div>
+    </div>
+    <?php if ($availableMembers === []): ?>
+        <div class="empty-state compact-empty">
+            <span class="empty-state-icon" aria-hidden="true">✓</span>
+            <h2>สมาชิกทุกคนมีบัญชีแล้ว</h2>
+            <p>เมื่อเพิ่มสมาชิกใหม่แล้ว จะสามารถสร้างบัญชีจากหน้านี้ได้</p>
+        </div>
+    <?php else: ?>
+        <form method="post" action="<?= e(app_url('admin/users.php')) ?>">
+            <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
+            <input type="hidden" name="action" value="create">
+            <div class="form-grid">
+                <div class="field field-full"><label for="member_id">สมาชิก</label><select id="member_id" name="member_id" required><option value="">เลือกสมาชิก</option><?php foreach ($availableMembers as $member): ?><option value="<?= (int) $member['id'] ?>" <?= $prefillMemberId === (int) $member['id'] ? 'selected' : '' ?>><?= e($member['member_no'] . ' · ' . $member['name']) ?></option><?php endforeach; ?></select></div>
+                <div class="field"><label for="username">ชื่อผู้ใช้</label><input id="username" name="username" maxlength="40" autocomplete="username" required></div>
+                <div class="field"><label for="password">รหัสผ่าน</label><input id="password" name="password" type="password" minlength="8" autocomplete="new-password" required><span class="field-hint">อย่างน้อย 8 ตัวอักษร</span></div>
+                <div class="field field-full"><label for="password_confirmation">ยืนยันรหัสผ่าน</label><input id="password_confirmation" name="password_confirmation" type="password" minlength="8" autocomplete="new-password" required></div>
+            </div>
+            <div class="actions form-actions"><button class="button button-primary" type="submit">สร้างบัญชี User</button></div>
+        </form>
+    <?php endif; ?>
+</section>
 
-<section class="card"><div class="section-heading"><div><h2>บัญชีทั้งหมด</h2><p class="muted">ค้นหาได้จาก username เลขสมาชิก หรือชื่อสมาชิก</p></div></div><form class="actions filter-card" method="get" action="<?= e(app_url('admin/users.php')) ?>"><label class="sr-only" for="q">ค้นหาบัญชี</label><input id="q" name="q" value="<?= e($term) ?>" placeholder="ค้นหา username หรือสมาชิก..."><button class="button" type="submit">ค้นหา</button><?php if ($term !== ''): ?><a class="button button-muted" href="<?= e(app_url('admin/users.php')) ?>">ล้าง</a><?php endif; ?></form><div class="table-wrap"><?php if ($users === []): ?><div class="empty">ไม่พบบัญชี</div><?php else: ?><table><thead><tr><th>Username</th><th>บทบาท</th><th>สมาชิก</th><th>สถานะ</th><th>เข้าใช้ล่าสุด</th><th></th></tr></thead><tbody><?php foreach ($users as $account): ?><tr><td><strong><?= e($account['username']) ?></strong></td><td><span class="badge <?= $account['role'] === 'admin' ? 'badge-admin' : 'badge-user' ?>"><?= $account['role'] === 'admin' ? 'Admin' : 'User' ?></span></td><td><?= $account['member_no'] === null ? '<span class="muted">—</span>' : e($account['member_no'] . ' · ' . $account['member_name']) ?></td><td><span class="badge <?= $account['status'] === 'active' ? 'badge-active' : 'badge-cancelled' ?>"><?= $account['status'] === 'active' ? 'ใช้งาน' : 'ปิดใช้งาน' ?></span></td><td><?= $account['last_login_at'] === null ? '<span class="muted">ยังไม่เคยเข้าใช้</span>' : e(thai_datetime((string) $account['last_login_at'])) ?></td><td><?php if ($account['role'] === 'user'): ?><form method="post" action="<?= e(app_url('admin/users.php')) ?>"><input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>"><input type="hidden" name="action" value="toggle"><input type="hidden" name="user_id" value="<?= (int) $account['id'] ?>"><input type="hidden" name="status" value="<?= $account['status'] === 'active' ? 'disabled' : 'active' ?>"><button class="button button-small <?= $account['status'] === 'active' ? 'button-danger' : '' ?>" type="submit"><?= $account['status'] === 'active' ? 'ปิดใช้งาน' : 'เปิดใช้งาน' ?></button></form><?php else: ?><span class="muted">บัญชีหลัก</span><?php endif; ?></td></tr><?php endforeach; ?></tbody></table><?php endif; ?></div></section>
+<section class="card">
+    <div class="section-heading">
+        <div>
+            <span class="eyebrow">ACCOUNT DIRECTORY</span>
+            <h2>บัญชีทั้งหมด</h2>
+            <p class="muted">ค้นหาได้จาก username เลขสมาชิก หรือชื่อสมาชิก</p>
+        </div>
+        <span class="badge badge-user"><?= number_format(count($users)) ?> บัญชี</span>
+    </div>
+    <form class="filter-grid filter-card" method="get" action="<?= e(app_url('admin/users.php')) ?>">
+        <div class="field"><label for="q">ค้นหาบัญชี</label><input id="q" name="q" value="<?= e($term) ?>" placeholder="username หรือสมาชิก..." autocomplete="off"></div>
+        <div class="actions filter-actions"><button class="button button-primary" type="submit">ค้นหา</button><?php if ($term !== ''): ?><a class="button button-muted" href="<?= e(app_url('admin/users.php')) ?>">ล้าง</a><?php endif; ?></div>
+    </form>
+    <?php if ($users === []): ?>
+        <div class="empty-state compact-empty"><span class="empty-state-icon" aria-hidden="true">◉</span><h2>ไม่พบบัญชี</h2><p>ลองปรับคำค้นหาแล้วค้นหาใหม่</p></div>
+    <?php else: ?>
+        <div class="table-wrap data-table-desktop">
+            <table>
+                <caption class="sr-only">บัญชีผู้ใช้ทั้งหมด</caption>
+                <thead><tr><th scope="col">Username</th><th scope="col">บทบาท</th><th scope="col">สมาชิก</th><th scope="col">สถานะ</th><th scope="col">เข้าใช้ล่าสุด</th><th scope="col">การจัดการ</th></tr></thead>
+                <tbody>
+                <?php foreach ($users as $account): ?>
+                    <tr>
+                        <td><strong>@<?= e($account['username']) ?></strong></td>
+                        <td><span class="badge <?= $account['role'] === 'admin' ? 'badge-admin' : 'badge-user' ?>"><?= $account['role'] === 'admin' ? 'Admin' : 'User' ?></span></td>
+                        <td><?= $account['member_no'] === null ? '<span class="muted">—</span>' : e($account['member_no'] . ' · ' . $account['member_name']) ?></td>
+                        <td><span class="badge <?= $account['status'] === 'active' ? 'badge-active' : 'badge-cancelled' ?>"><?= $account['status'] === 'active' ? 'ใช้งาน' : 'ปิดใช้งาน' ?></span></td>
+                        <td><?= $account['last_login_at'] === null ? '<span class="muted">ยังไม่เคยเข้าใช้</span>' : e(thai_datetime((string) $account['last_login_at'])) ?></td>
+                        <td><?php if ($account['role'] === 'user'): ?><form method="post" action="<?= e(app_url('admin/users.php')) ?>"><input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>"><input type="hidden" name="action" value="toggle"><input type="hidden" name="user_id" value="<?= (int) $account['id'] ?>"><input type="hidden" name="status" value="<?= $account['status'] === 'active' ? 'disabled' : 'active' ?>"><button class="button button-small <?= $account['status'] === 'active' ? 'button-danger' : 'button-primary' ?>" type="submit"><?= $account['status'] === 'active' ? 'ปิดใช้งาน' : 'เปิดใช้งาน' ?></button></form><?php else: ?><span class="muted">บัญชีหลัก</span><?php endif; ?></td>
+                    </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+        <div class="data-list-mobile account-data-list" aria-label="บัญชีผู้ใช้บนมือถือ">
+            <?php foreach ($users as $account): ?>
+                <article class="data-card account-data-card">
+                    <div class="data-card-top">
+                        <div><span class="data-card-label">ACCOUNT</span><strong>@<?= e($account['username']) ?></strong></div>
+                        <span class="badge <?= $account['role'] === 'admin' ? 'badge-admin' : 'badge-user' ?>"><?= $account['role'] === 'admin' ? 'Admin' : 'User' ?></span>
+                    </div>
+                    <div class="data-card-grid">
+                        <div><span class="data-card-label">สมาชิก</span><strong><?= $account['member_no'] === null ? 'บัญชีหลัก' : e($account['member_no']) ?></strong><small><?= $account['member_name'] === null ? 'ผู้ดูแลระบบ' : e($account['member_name']) ?></small></div>
+                        <div class="data-card-total"><span class="data-card-label">สถานะ</span><strong class="account-status-text"><?= $account['status'] === 'active' ? 'ใช้งาน' : 'ปิดใช้งาน' ?></strong><small><?= $account['last_login_at'] === null ? 'ยังไม่เคยเข้าใช้' : e(thai_datetime((string) $account['last_login_at'])) ?></small></div>
+                    </div>
+                    <?php if ($account['role'] === 'user'): ?>
+                        <form method="post" action="<?= e(app_url('admin/users.php')) ?>">
+                            <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>"><input type="hidden" name="action" value="toggle"><input type="hidden" name="user_id" value="<?= (int) $account['id'] ?>"><input type="hidden" name="status" value="<?= $account['status'] === 'active' ? 'disabled' : 'active' ?>">
+                            <button class="button button-small <?= $account['status'] === 'active' ? 'button-danger' : 'button-primary' ?> data-card-action" type="submit"><?= $account['status'] === 'active' ? 'ปิดใช้งานบัญชี' : 'เปิดใช้งานบัญชี' ?></button>
+                        </form>
+                    <?php endif; ?>
+                </article>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
+</section>
 <?php require __DIR__ . '/../includes/footer.php'; ?>

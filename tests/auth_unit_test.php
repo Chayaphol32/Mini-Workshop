@@ -22,7 +22,7 @@ check(!valid_username('ab'), 'username shorter than three characters is rejected
 check(!valid_username('bad name'), 'username containing a space is rejected');
 check(valid_password('secret123'), 'password with eight characters is accepted');
 check(!valid_password('short'), 'password shorter than eight characters is rejected');
-check(role_home('user') === 'user/index.php', 'User role goes to User dashboard');
+check(role_home('user') === 'user/menu.php', 'User role goes to order-first menu');
 check(role_home('admin') === 'admin/index.php', 'Admin role goes to Admin dashboard');
 check(role_home('unknown') === 'login.php', 'unknown role goes to login');
 

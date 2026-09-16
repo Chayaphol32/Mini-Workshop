@@ -6,6 +6,30 @@ function e(mixed $value): string
     return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
 }
 
+function text_initial(string $value): string
+{
+    if ($value === '') {
+        return '';
+    }
+
+    if (function_exists('mb_substr')) {
+        return mb_substr($value, 0, 1, 'UTF-8');
+    }
+
+    if (preg_match('/^./us', $value, $matches) === 1) {
+        return $matches[0];
+    }
+
+    return substr($value, 0, 1);
+}
+
+function text_lower(string $value): string
+{
+    return function_exists('mb_strtolower')
+        ? mb_strtolower($value, 'UTF-8')
+        : strtolower($value);
+}
+
 function parse_id(?string $value): ?int
 {
     if ($value === null || filter_var($value, FILTER_VALIDATE_INT) === false) {
@@ -121,7 +145,7 @@ function role_home(string $role): string
 {
     return match ($role) {
         'admin' => 'admin/index.php',
-        'user' => 'user/index.php',
+        'user' => 'user/menu.php',
         default => 'login.php',
     };
 }
