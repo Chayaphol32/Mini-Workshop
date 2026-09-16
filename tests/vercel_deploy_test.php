@@ -66,6 +66,10 @@ expect_vercel(
     ($config['functions']['api/index.php']['runtime'] ?? null) === 'vercel-php@0.9.0',
     'Vercel should use the PHP community runtime'
 );
+expect_vercel(
+    ($config['regions'] ?? null) === ['sin1'],
+    'Vercel PHP functions should run in Singapore near the TiDB database'
+);
 $assetCacheHeader = null;
 foreach (($config['headers'] ?? []) as $headerRule) {
     if (($headerRule['source'] ?? null) !== '/assets/(.*)') {

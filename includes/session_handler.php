@@ -15,6 +15,10 @@ final class DatabaseSessionHandler implements SessionHandlerInterface
 
     public function open(string $path, string $name): bool
     {
+        if (!filter_var(getenv('COFFEE_SESSION_AUTO_MIGRATE') ?: '0', FILTER_VALIDATE_BOOLEAN)) {
+            return true;
+        }
+
         return $this->ensureSchema();
     }
 

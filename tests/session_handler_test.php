@@ -13,7 +13,6 @@ putenv('COFFEE_DB_NAME=coffee_rewards');
 putenv('COFFEE_DB_USER=root');
 putenv('COFFEE_DB_PASSWORD=root');
 
-require_once __DIR__ . '/../config/database.php';
 require_once $handlerPath;
 
 function expect_true(bool $condition, string $message): void
@@ -23,6 +22,17 @@ function expect_true(bool $condition, string $message): void
     }
     echo "PASS: {$message}\n";
 }
+
+putenv('COFFEE_SESSION_AUTO_MIGRATE=0');
+$isolatedPdo = new PDO('sqlite::memory:');
+$fastHandler = new DatabaseSessionHandler($isolatedPdo);
+expect_true(
+    $fastHandler->open('', 'PHPSESSID'),
+    'database session handler opens without running schema DDL by default'
+);
+
+putenv('COFFEE_SESSION_AUTO_MIGRATE=1');
+require_once __DIR__ . '/../config/database.php';
 
 $handler = new DatabaseSessionHandler($pdo);
 $sessionId = 'tdd_' . bin2hex(random_bytes(12));
