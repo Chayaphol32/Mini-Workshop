@@ -14,11 +14,13 @@ $dispatcher = $projectRoot . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARA
 $vercelConfig = $projectRoot . DIRECTORY_SEPARATOR . 'vercel.json';
 $databaseConfig = $projectRoot . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'database.php';
 $bootstrapConfig = $projectRoot . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'bootstrap.php';
+$sessionHandlerConfig = $projectRoot . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'session_handler.php';
 
 expect_vercel(is_file($dispatcher), 'Vercel dispatcher should exist');
 expect_vercel(is_file($vercelConfig), 'vercel.json should exist');
 expect_vercel(is_file($databaseConfig), 'database config should exist');
 expect_vercel(is_file($bootstrapConfig), 'bootstrap config should exist');
+expect_vercel(is_file($sessionHandlerConfig), 'database session handler should exist');
 
 $databaseSource = (string) file_get_contents($databaseConfig);
 expect_vercel(
@@ -48,6 +50,12 @@ $bootstrapSource = (string) file_get_contents($bootstrapConfig);
 expect_vercel(
     str_contains($bootstrapSource, "defined('COFFEE_SKIP_DATABASE')"),
     'Bootstrap should support skipping database setup for public requests'
+);
+expect_vercel(
+    str_contains($bootstrapSource, "getenv('VERCEL')")
+        && str_contains($bootstrapSource, 'DatabaseSessionHandler')
+        && str_contains($bootstrapSource, 'session_set_save_handler'),
+    'Bootstrap should use shared database sessions on Vercel'
 );
 
 require_once $dispatcher;
